@@ -1,22 +1,39 @@
+use anyhow::{anyhow, Error, Result};
 use itertools::Itertools;
+use regex::Regex;
 use std::convert::TryFrom;
 use std::fmt;
 use structopt::StructOpt;
 
 #[derive(Debug, Clone)]
 struct DiceRollCondition {
-    dice: u32,
     roll_count: u32,
+    dice: u32,
 }
 
 impl TryFrom<&str> for DiceRollCondition {
-    type Error = String;
+    type Error = Error;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        // TODO: implement
-        Ok(Self {
-            roll_count: 2,
-            dice: 6,
-        })
+        let re = Regex::new(r"\A(\d+)d(\d+)\z").unwrap();
+        let captures = re.captures(value).ok_or(anyhow!(
+            "invalid format: expect '<roll_count>d<dice>' (ex: '26d')"
+        ))?;
+
+        // roll_count
+        let roll_count = captures.get(1).map(|m| m.as_str()).unwrap();
+        let roll_count: u32 = roll_count.parse()?;
+        if !(1..=10).contains(&roll_count) {
+            return Err(anyhow!("invalid roll count: expect between 1 and 10"));
+        }
+
+        // dice
+        let dice = captures.get(2).map(|m| m.as_str()).unwrap();
+        let dice: u32 = dice.parse()?;
+        if !(1..=100).contains(&dice) {
+            return Err(anyhow!("invalid dice: expect between 1 and 100"));
+        }
+
+        Ok(Self { roll_count, dice })
     }
 }
 
@@ -60,7 +77,7 @@ struct Opt {
     diceroll: String,
 }
 
-fn main() -> Result<(), String> {
+fn main() -> Result<()> {
     let opt = Opt::from_args();
     let roll_condition = DiceRollCondition::try_from(opt.diceroll.as_ref())?;
     let roll_result = roll_condition.roll();
