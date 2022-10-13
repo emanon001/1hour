@@ -88,3 +88,54 @@ fn main() -> Result<()> {
     println!("{} = {}", dice_roll, roll_result);
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod dice_roll {
+        use super::*;
+
+        #[test]
+        fn try_from() {
+            assert!(matches!(
+                DiceRoll::try_from("1d6"),
+                Ok(DiceRoll {
+                    roll_count: 1,
+                    dice: 6
+                })
+            ));
+            assert!(matches!(
+                DiceRoll::try_from("2d100"),
+                Ok(DiceRoll {
+                    roll_count: 2,
+                    dice: 100
+                })
+            ));
+        }
+
+        #[test]
+        fn try_from_boundary_values() {
+            assert!(DiceRoll::try_from("0d6").is_err());
+            assert!(DiceRoll::try_from("1d6").is_ok());
+            assert!(DiceRoll::try_from("10d6").is_ok());
+            assert!(DiceRoll::try_from("11d6").is_err());
+
+            assert!(DiceRoll::try_from("2d0").is_err());
+            assert!(DiceRoll::try_from("2d1").is_ok());
+            assert!(DiceRoll::try_from("2d100").is_ok());
+            assert!(DiceRoll::try_from("2d101").is_err());
+        }
+
+        #[test]
+        fn roll() -> Result<()> {
+            let dice_roll = DiceRoll::try_from("2d6")?;
+            let res = dice_roll.roll();
+            assert_eq!(res.result.len(), 2);
+            assert!(res.result.iter().all(|d| (1..=dice_roll.dice).contains(d)));
+            assert_eq!(res.sum(), res.result.iter().sum());
+
+            Ok(())
+        }
+    }
+}
