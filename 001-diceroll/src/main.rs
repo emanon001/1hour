@@ -61,6 +61,7 @@ struct DiceRollResult {
 
 impl DiceRollResult {
     fn new(result: Vec<u32>) -> Self {
+        assert!(!result.is_empty());
         Self { result }
     }
 
