@@ -14,7 +14,7 @@ struct DiceRollCondition {
 impl TryFrom<&str> for DiceRollCondition {
     type Error = Error;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let re = Regex::new(r"\A(\d+)d(\d+)\z").unwrap();
+        let re = Regex::new(r"\A(\d+)[dD](\d+)\z").unwrap();
         let captures = re.captures(value).ok_or(anyhow!(
             "invalid format: expect '<roll_count>d<dice>' (ex: '26d')"
         ))?;
