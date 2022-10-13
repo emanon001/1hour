@@ -6,13 +6,13 @@ use std::convert::TryFrom;
 use std::fmt;
 use structopt::StructOpt;
 
-#[derive(Debug, Clone)]
-struct DiceRollCondition {
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct DiceRoll {
     roll_count: u32,
     dice: u32,
 }
 
-impl TryFrom<&str> for DiceRollCondition {
+impl TryFrom<&str> for DiceRoll {
     type Error = Error;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         let re = Regex::new(r"\A(\d+)[dD](\d+)\z").unwrap();
@@ -38,13 +38,13 @@ impl TryFrom<&str> for DiceRollCondition {
     }
 }
 
-impl fmt::Display for DiceRollCondition {
+impl fmt::Display for DiceRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}d{}", self.roll_count, self.dice)
     }
 }
 
-impl DiceRollCondition {
+impl DiceRoll {
     fn roll(&self) -> DiceRollResult {
         let mut rng = rand::thread_rng();
         let result = (0..self.roll_count)
@@ -54,7 +54,7 @@ impl DiceRollCondition {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct DiceRollResult {
     result: Vec<u32>,
 }
@@ -78,13 +78,13 @@ impl fmt::Display for DiceRollResult {
 #[derive(StructOpt)]
 struct Opt {
     #[structopt(help = "2d6")]
-    diceroll: String,
+    dice_roll: String,
 }
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
-    let roll_condition = DiceRollCondition::try_from(opt.diceroll.as_ref())?;
-    let roll_result = roll_condition.roll();
-    println!("{} = {}", roll_condition, roll_result);
+    let dice_roll = DiceRoll::try_from(opt.dice_roll.as_ref())?;
+    let roll_result = dice_roll.roll();
+    println!("{} = {}", dice_roll, roll_result);
     Ok(())
 }
