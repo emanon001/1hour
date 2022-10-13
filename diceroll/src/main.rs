@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Error, Result};
 use itertools::Itertools;
+use rand::prelude::*;
 use regex::Regex;
 use std::convert::TryFrom;
 use std::fmt;
@@ -45,8 +46,11 @@ impl fmt::Display for DiceRollCondition {
 
 impl DiceRollCondition {
     fn roll(&self) -> DiceRollResult {
-        // TODO: implement
-        DiceRollResult::new(vec![2, 5])
+        let mut rng = rand::thread_rng();
+        let result = (0..self.roll_count)
+            .map(|_| rng.gen_range(1..=self.dice))
+            .collect();
+        DiceRollResult::new(result)
     }
 }
 
