@@ -5,7 +5,7 @@
 ## Usage
 
 ```
-$ seq 1 10 | choose 2
+$ seq 1 10 | choose -n 2
 5
 2
 ```
