@@ -1,11 +1,11 @@
 # e1tree
 
-`tree`コマンド。emanon001 tree。
+自作`tree`コマンド。(`emanon001 tree`)
 
 ## Usage
 
 ```
-$ t1tree test
+$ e1tree test
 test
 └── a
     ├── b
