@@ -47,12 +47,11 @@ fn build_tree_lines(path: &Path) -> Result<Vec<String>> {
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
-    let metadata = fs::metadata(&opt.directory)?;
-    if !metadata.is_dir() {
+    let dir = Path::new(&opt.directory);
+    if !dir.is_dir() {
         return Err(anyhow!("argument is not directory"));
     }
-    let path = Path::new(&opt.directory);
-    let lines = build_tree_lines(path)?;
+    let lines = build_tree_lines(dir)?;
     for l in lines {
         println!("{}", l);
     }
