@@ -1,24 +1,16 @@
 use anyhow::Result;
-use std::{
-    io::{BufRead, BufReader},
-    sync::{Arc, Mutex},
-    thread::{self},
-    time::{Duration, Instant},
-};
+use std::io::{BufRead, BufReader};
 use structopt::StructOpt;
 
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
+    event::{DisableMouseCapture, EnableMouseCapture},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use jq_finder::app::run_app;
 use jq_finder::jq::Jq;
 use jq_finder::state::State;
-use jq_finder::ui::ui;
-use tui::{
-    backend::{Backend, CrosstermBackend},
-    Terminal,
-};
+use tui::{backend::CrosstermBackend, Terminal};
 
 #[derive(StructOpt)]
 struct Opt {
@@ -36,74 +28,6 @@ fn get_json(json_file: &str) -> Result<String> {
         .collect::<Vec<_>>()
         .join("\n"))
 }
-
-fn run_app<B: Backend>(mut app: State, terminal: &mut Terminal<B>, jq: Jq) -> Result<()> {
-    // first filter
-    let jq_output = jq.execute(&app.filter)?;
-    app.update_output(jq_output)?;
-
-    // filter loop
-    let tick_rate = Duration::from_millis(50);
-    let jq = Arc::new(jq);
-    let app = Arc::new(Mutex::new(app));
-    let last_input_at = Arc::new(Mutex::new(Instant::now()));
-    loop {
-        // tick_rate毎に描画
-        terminal.draw(|f| {
-            let app = &app.lock().unwrap();
-            ui(f, &app)
-        })?;
-
-        if !event::poll(tick_rate)? {
-            continue;
-        }
-
-        // キー入力を受け取り、jqコマンドを実行する
-        // pollの結果がtrueであれば event::read()はノンブロッキングになる
-        if let Event::Key(key) = event::read()? {
-            let mut locked_app = app.lock().unwrap();
-            let mut updated = false;
-            match key.code {
-                KeyCode::Char(c) => {
-                    if c == 'c' && key.modifiers == KeyModifiers::CONTROL {
-                        return Ok(());
-                    }
-                    updated = true;
-                    locked_app.filter.push(c);
-                }
-                KeyCode::Backspace => {
-                    updated = true;
-                    locked_app.filter.pop();
-                }
-                _ => {}
-            }
-
-            if updated {
-                {
-                    let mut locked_last_input_at = last_input_at.lock().unwrap();
-                    *locked_last_input_at = Instant::now();
-                }
-
-                // filter json
-                let app = Arc::clone(&app);
-                let last_input_at = Arc::clone(&last_input_at);
-                let jq = Arc::clone(&jq);
-                let _ = thread::spawn(move || {
-                    let delay = Duration::from_millis(200);
-                    thread::sleep(delay);
-                    let last_input_at = last_input_at.lock().unwrap();
-                    if last_input_at.elapsed() >= delay {
-                        let mut app = app.lock().unwrap();
-                        if let Ok(output) = jq.execute(&app.filter) {
-                            let _ = app.update_output(output);
-                        }
-                    }
-                });
-            }
-        }
-    }
-}
-
 fn main() -> Result<()> {
     let opt = Opt::from_args();
 
