@@ -7,4 +7,4 @@
 - [003-e1tree](./003-e1tree/) / 自作`tree`コマンド
 - [004-shuffle-tracks](./004-shuffle-tracks/) / macOSのミュージックアプリでシャッフル再生を行う
 - [005-open-scrapbox-random-page](./005-open-scrapbox-random-page) / Scrapboxのページをランダムで開くコマンド。macOS用
-- [006-jq-finder](./006-jq-finder) / jqでJSONをインタラクティブにフィルタリングする
+- [006-jq-finder](./006-jq-finder) / jqコマンドのフィルタリング結果を確認するTUIツール
