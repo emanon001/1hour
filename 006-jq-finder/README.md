@@ -10,7 +10,7 @@ $ cargo run -- --json-file sample/foo.json
 
 ![jq-finder1](./jq-finder1.png)
 
-入力したフィルタを適用した結果が下の欄に反映される。
+入力したフィルタを適用した結果が出力欄に反映される。
 ![jq-finder2](./jq-finder2.png)
 
 
