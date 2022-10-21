@@ -12,8 +12,8 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use jq_finder::app::App;
 use jq_finder::jq::Jq;
+use jq_finder::state::State;
 use jq_finder::ui::ui;
 use tui::{
     backend::{Backend, CrosstermBackend},
@@ -37,7 +37,7 @@ fn get_json(json_file: &str) -> Result<String> {
         .join("\n"))
 }
 
-fn run_app<B: Backend>(mut app: App, terminal: &mut Terminal<B>, jq: Jq) -> Result<()> {
+fn run_app<B: Backend>(mut app: State, terminal: &mut Terminal<B>, jq: Jq) -> Result<()> {
     // first filter
     let jq_output = jq.execute(&app.filter)?;
     app.update_output(jq_output)?;
@@ -119,7 +119,7 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // create app and run it
-    let app = App::default();
+    let app = State::default();
     let res = run_app(app, &mut terminal, jq);
 
     // restore terminal

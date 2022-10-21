@@ -1,11 +1,11 @@
 use anyhow::Result;
 
-pub struct App {
+pub struct State {
     pub filter: String,
     pub output: String,
 }
 
-impl Default for App {
+impl Default for State {
     fn default() -> Self {
         Self {
             filter: "".to_string(),
@@ -14,7 +14,7 @@ impl Default for App {
     }
 }
 
-impl App {
+impl State {
     pub fn update_output(&mut self, output: std::process::Output) -> Result<()> {
         self.output = if output.status.success() {
             String::from_utf8(output.stdout)

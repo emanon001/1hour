@@ -1,4 +1,4 @@
-use crate::app::App;
+use crate::state::State;
 use tui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout},
@@ -8,7 +8,7 @@ use tui::{
 };
 use unicode_width::UnicodeWidthStr;
 
-pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
+pub fn ui<B: Backend>(f: &mut Frame<B>, app: &State) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
