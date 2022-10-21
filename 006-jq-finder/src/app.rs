@@ -16,19 +16,18 @@ pub fn run_app<B: Backend>(mut state: State, terminal: &mut Terminal<B>, jq: Jq)
     let jq_output = jq.execute(&state.filter)?;
     state.update_output(jq_output)?;
 
-    // filter loop
-    let tick_rate = Duration::from_millis(50);
+    // event loop
+    let min_draw_interval = Duration::from_millis(50);
     let state = Arc::new(Mutex::new(state));
     let jq = Arc::new(Mutex::new(jq));
     let last_input_at = Arc::new(Mutex::new(Instant::now()));
     loop {
-        // tick_rate毎に描画
         terminal.draw(|f| {
             let state = state.lock().unwrap();
             ui(f, &state)
         })?;
 
-        if !event::poll(tick_rate)? {
+        if !event::poll(min_draw_interval)? {
             continue;
         }
 
