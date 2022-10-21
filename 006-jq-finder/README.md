@@ -13,3 +13,5 @@ $ cargo run -- --json-file sample/foo.json
 入力したフィルタを適用した結果が下の欄に反映される。
 ![jq-finder2](./jq-finder2.png)
 
+
+なお、出力欄のスクロールを実装していないため、JSONが大きいと全体の構造を確認できない。
