@@ -12,7 +12,7 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &State) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
-        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
         .split(f.size());
 
     let filter = Paragraph::new(app.filter.as_ref())
