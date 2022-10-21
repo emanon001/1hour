@@ -118,6 +118,7 @@ dependencies = [
  "crossterm",
  "structopt",
  "tui",
+ "unicode-width",
 ]
 
 [[package]]
