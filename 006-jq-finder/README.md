@@ -5,7 +5,7 @@ jqコマンドのフィルタリング結果を確認するTUIツール。
 ## Usage
 
 ```
-$ cargo run -- --json-file sample/foo.json
+$ cat sample/foo.json | cargo run
 ```
 
 ![jq-finder1](./jq-finder1.png)

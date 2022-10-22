@@ -16,12 +16,10 @@ use tui::{backend::CrosstermBackend, Terminal};
 struct Opt {
     #[structopt(help = "jq path", long = "jq-path", default_value = "jq")]
     jq_path: String,
-    #[structopt(help = "json file path", long = "json-file")]
-    json_file: String,
 }
 
-fn get_json(json_file: &str) -> Result<String> {
-    let reader = BufReader::new(std::fs::File::open(json_file)?);
+fn get_json_from_stdin() -> Result<String> {
+    let reader = BufReader::new(std::io::stdin());
     Ok(reader
         .lines()
         .map(|l| l.unwrap())
@@ -32,7 +30,7 @@ fn main() -> Result<()> {
     let opt = Opt::from_args();
 
     // setup jq
-    let json = get_json(&opt.json_file)?;
+    let json = get_json_from_stdin()?;
     let jq = Jq::new(&opt.jq_path, &json);
 
     // setup terminal

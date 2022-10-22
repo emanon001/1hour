@@ -11,3 +11,6 @@ anyhow = "1.0"
 tui = "0.19"
 crossterm = "0.25"
 unicode-width = "0.1.7"
+
+[patch.crates-io]
+crossterm = { git = "https://github.com/yyogo/crossterm.git", branch = "use-select-in-unix" }
