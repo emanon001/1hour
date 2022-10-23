@@ -52,9 +52,11 @@ pub fn run_app<B: Backend>(mut state: State, terminal: &mut Terminal<B>, jq: Jq)
             }
 
             if updated {
+                // update last input datetime
+                let input_at = Instant::now();
                 {
-                    let mut locked_last_input_at = last_input_at.lock().unwrap();
-                    *locked_last_input_at = Instant::now();
+                    let mut last_input_at = last_input_at.lock().unwrap();
+                    *last_input_at = input_at;
                 }
 
                 // filter json
@@ -62,15 +64,16 @@ pub fn run_app<B: Backend>(mut state: State, terminal: &mut Terminal<B>, jq: Jq)
                 let jq = Arc::clone(&jq);
                 let last_input_at = Arc::clone(&last_input_at);
                 let _ = thread::spawn(move || {
-                    let delay = Duration::from_millis(200);
-                    thread::sleep(delay);
+                    // 遅延を入れる。待っている最中にキー入力があった場合は処理を打ち切る
+                    thread::sleep(Duration::from_millis(500));
                     let last_input_at = last_input_at.lock().unwrap();
-                    if last_input_at.elapsed() >= delay {
-                        let mut state = state.lock().unwrap();
-                        let jq = jq.lock().unwrap();
-                        if let Ok(output) = jq.execute(&state.filter) {
-                            let _ = state.update_output(output);
-                        }
+                    if input_at != *last_input_at {
+                        return;
+                    }
+                    let mut state = state.lock().unwrap();
+                    let jq = jq.lock().unwrap();
+                    if let Ok(output) = jq.execute(&state.filter) {
+                        let _ = state.update_output(output);
                     }
                 });
             }
