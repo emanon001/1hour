@@ -19,7 +19,7 @@ pub fn run_app<B: Backend>(mut state: State, terminal: &mut Terminal<B>, jq: Jq)
     // event loop
     let min_draw_interval = Duration::from_millis(50);
     let state = Arc::new(Mutex::new(state));
-    let jq = Arc::new(Mutex::new(jq));
+    let jq = Arc::new(jq);
     let last_input_at = Arc::new(Mutex::new(Instant::now()));
     loop {
         terminal.draw(|f| {
@@ -71,7 +71,6 @@ pub fn run_app<B: Backend>(mut state: State, terminal: &mut Terminal<B>, jq: Jq)
                         return;
                     }
                     let mut state = state.lock().unwrap();
-                    let jq = jq.lock().unwrap();
                     if let Ok(output) = jq.execute(&state.filter) {
                         let _ = state.update_output(output);
                     }
