@@ -1,22 +1,37 @@
-import { Api } from "https://cdn.skypack.dev/-/@octokit/plugin-rest-endpoint-methods@v6.7.0-RRl1lE15Kk7LVJcVYsef/dist=es2019,mode=types/dist-types/types.d.ts";
-import {
-  Octokit as OctokitCore,
-} from "https://cdn.skypack.dev/@octokit/core?dts";
-import { restEndpointMethods } from "https://cdn.skypack.dev/@octokit/plugin-rest-endpoint-methods?dts";
-
-type ApiClient = OctokitCore & Api;
-
-const fetchTodayEvents = async (
-  octokit: ApiClient,
-  username: string,
-): Promise<any> => {
-  // TODO:
-  return [];
+const request = async <T>(token: string, query: string): Promise<T> => {
+  const url = "https://api.github.com/graphql";
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Authorization": `bearer ${token}`,
+    },
+    body: JSON.stringify({ query }),
+  });
+  return (await resp.json()).data;
 };
 
-const filterCommits = (events: any): any => {
-  // TODO:
-  return [];
+const fetchUsername = async (
+  token: string,
+): Promise<string> => {
+  const query = `
+  query {
+    viewer {
+      login
+    }
+  }
+  `;
+  const res = await request<{ viewer: { login: string } }>(token, query);
+  return res.viewer.login;
+};
+
+const fetchTodayCommits = async (
+  token: string,
+): Promise<any> => {
+  // TODO
+  const query = `
+  `;
+  const res = await request<any>(token, query);
+  return res;
 };
 
 const formatCommits = (commits: any): any => {
@@ -28,19 +43,12 @@ const printCommits = (commits: any): void => {
   // TODO:
 };
 
-const createOctokit = (auth: string): ApiClient => {
-  const Octokit = OctokitCore.plugin(restEndpointMethods);
-  return new Octokit({
-    auth,
-  });
-};
-
-const auth = Deno.env.get("GH_COMMITS_AUTH_TOKEN");
-if (!auth) {
+const token = Deno.env.get("GH_COMMITS_AUTH_TOKEN");
+if (!token) {
   throw new Error("please specify GH_COMMITS_AUTH_TOKEN");
 }
-const client = createOctokit(auth);
-const username = "emanon001";
-const events = await fetchTodayEvents(client, username);
-const commits = formatCommits(filterCommits(events));
-printCommits(commits);
+const username = await fetchUsername(token);
+console.log(username);
+// const events = await fetchTodayCommits(token);
+// const commits = formatCommits(filterCommits(events));
+// printCommits(commits);
