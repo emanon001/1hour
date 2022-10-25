@@ -99,7 +99,7 @@ const fetchTodayCommits = async (
   }
   `;
 
-  const now = datetime("2022-10-25");
+  const now = datetime();
   const startOfDay = now.startOfDay();
   const endOfDay = now.endOfDay();
 
