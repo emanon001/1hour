@@ -8,3 +8,4 @@
 - [004-shuffle-tracks](./004-shuffle-tracks/) / macOSのミュージックアプリでシャッフル再生を行う
 - [005-open-scrapbox-random-page](./005-open-scrapbox-random-page) / Scrapboxのページをランダムで開くコマンド。macOS用
 - [006-jq-finder](./006-jq-finder) / jqコマンドのフィルタリング結果を確認するTUIツール
+- [007-gh-commits](./007-gh-commits) / Github GraphQL APIを使用して指定した日付のコミットを取得する

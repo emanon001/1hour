@@ -17,6 +17,21 @@ const getEnv = (): Env => {
   return { token, email };
 };
 
+type CommitsPeriod = {
+  startOfDay: string;
+  endOfDay: string;
+};
+
+const getCommitsPeriod = (day: string | null): CommitsPeriod => {
+  const dt = day === null ? datetime() : datetime(day);
+  const startOfDay = dt.startOfDay().toISO();
+  const endOfDay = dt.endOfDay().toISO();
+  return {
+    startOfDay,
+    endOfDay,
+  };
+};
+
 const request = async <T>(
   token: string,
   query: string,
@@ -59,11 +74,23 @@ type CommitsByRepository = {
   }[];
 };
 
-const fetchTodayCommits = async (
-  token: string,
-  login: string,
-  email: string,
+const fetchCommits = async (
+  params: {
+    token: string;
+    login: string;
+    email: string;
+    startOfDay: string;
+    endOfDay: string;
+  },
 ): Promise<CommitsByRepository[]> => {
+  const {
+    token,
+    login,
+    email,
+    startOfDay,
+    endOfDay,
+  } = params;
+
   const query = `
   query($login: String!, $email: String!, $from: DateTime!, $to: DateTime!, $commitSince: GitTimestamp!, $commitUntil: GitTimestamp!) {
     user(login: $login) {
@@ -99,18 +126,15 @@ const fetchTodayCommits = async (
   }
   `;
 
-  const now = datetime();
-  const startOfDay = now.startOfDay();
-  const endOfDay = now.endOfDay();
-
   const variables = {
     login,
     email,
-    from: startOfDay.toISO(),
-    to: endOfDay.toISO(),
-    commitSince: startOfDay.toISO(),
-    commitUntil: endOfDay.toISO(),
+    from: startOfDay,
+    to: endOfDay,
+    commitSince: startOfDay,
+    commitUntil: endOfDay,
   };
+  // TODO: 型パラメータを指定する
   const res = await request<any>(token, query, variables);
   return res.user.contributionsCollection.commitContributionsByRepository.map(
     ({ repository }: { repository: any }) => {
@@ -148,5 +172,11 @@ const printCommits = (repoCommits: CommitsByRepository[]): void => {
 
 const env = getEnv();
 const userName = await fetchLoginUserName(env.token);
-const commits = await fetchTodayCommits(env.token, userName, env.email);
+const commitsPeriod = getCommitsPeriod(Deno.args[0] ?? null);
+const commits = await fetchCommits({
+  token: env.token,
+  login: userName,
+  email: env.email,
+  ...commitsPeriod,
+});
 printCommits(commits);
