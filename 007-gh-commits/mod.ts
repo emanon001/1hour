@@ -47,11 +47,20 @@ const fetchLoginUserName = async (
   return res.viewer.login;
 };
 
+type CommitsByRepository = {
+  name: string;
+  url: string;
+  commits: {
+    message: string;
+    commitUrl: string;
+  }[];
+};
+
 const fetchTodayCommits = async (
   token: string,
   login: string,
   email: string,
-): Promise<any> => {
+): Promise<CommitsByRepository[]> => {
   const query = `
   query($login: String!, $email: String!, $from: DateTime!, $to: DateTime!, $commitSince: GitTimestamp!, $commitUntil: GitTimestamp!) {
     user(login: $login) {
@@ -97,22 +106,28 @@ const fetchTodayCommits = async (
     commitUntil: endOfDay.toISO(),
   };
   const res = await request<any>(token, query, variables);
-  return res;
+  return res.user.contributionsCollection.commitContributionsByRepository.map(
+    ({ repository }: { repository: any }) => {
+      return {
+        name: repository.name,
+        url: repository.url,
+        commits: repository.ref.target.history.nodes,
+      };
+    },
+  );
 };
 
-const formatCommits = (commits: any): any => {
-  // TODO:
-  return [];
-};
-
-const printCommits = (commits: any): void => {
-  // TODO:
+const printCommits = (repoCommits: CommitsByRepository[]): void => {
+  // Scrapbox format
+  repoCommits.forEach((repo) => {
+    console.log(` [${repo.name} ${repo.url}]`);
+    repo.commits.forEach((c) => {
+      console.log(`  [${c.message} ${c.commitUrl}]`);
+    });
+  });
 };
 
 const env = getEnv();
 const userName = await fetchLoginUserName(env.token);
-// console.log(user);
 const commits = await fetchTodayCommits(env.token, userName, env.email);
-console.log(commits);
-// const commits = formatCommits(filterCommits(events));
-// printCommits(commits);
+printCommits(commits);
