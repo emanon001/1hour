@@ -50,9 +50,12 @@ const fetchLoginUserName = async (
 type CommitsByRepository = {
   name: string;
   url: string;
-  commits: {
-    message: string;
-    commitUrl: string;
+  branches: {
+    name: string;
+    commits: {
+      message: string;
+      commitUrl: string;
+    }[];
   }[];
 };
 
@@ -69,18 +72,21 @@ const fetchTodayCommits = async (
           repository {
             name,
             url,
-            ref(qualifiedName: "main") {
-              target {
-                ... on Commit {
-                  history(
-                    first: 100, 
-                    author: {emails: [$email]},
-                    since: $commitSince,
-                    until: $commitUntil,
-                  ) {
-                    nodes {
-                      message,
-                      commitUrl,
+            refs(refPrefix: "refs/heads/", first: 100) {
+              nodes {
+                name,
+                target {
+                  ... on Commit {
+                    history(
+                      first: 100, 
+                      author: {emails: [$email]},
+                      since: $commitSince,
+                      until: $commitUntil,
+                    ) {
+                      nodes {
+                        message,
+                        commitUrl,
+                      }
                     }
                   }
                 }
@@ -93,7 +99,7 @@ const fetchTodayCommits = async (
   }
   `;
 
-  const now = datetime();
+  const now = datetime("2022-10-25");
   const startOfDay = now.startOfDay();
   const endOfDay = now.endOfDay();
 
@@ -111,7 +117,12 @@ const fetchTodayCommits = async (
       return {
         name: repository.name,
         url: repository.url,
-        commits: repository.ref.target.history.nodes,
+        branches: repository.refs.nodes.map((b: any) => {
+          return {
+            name: b.name,
+            commits: b.target.history.nodes,
+          };
+        }),
       };
     },
   );
@@ -120,10 +131,18 @@ const fetchTodayCommits = async (
 const printCommits = (repoCommits: CommitsByRepository[]): void => {
   // Scrapbox format
   repoCommits.forEach((repo) => {
-    console.log(` [${repo.name} ${repo.url}]`);
-    repo.commits.forEach((c) => {
-      console.log(`  [${c.message} ${c.commitUrl}]`);
+    const outputCommits = repo.branches.flatMap((b) => {
+      const branchName = b.name;
+      const branchLabel = (branchName === "main" || branchName === "master")
+        ? ""
+        : `${branchName}:`;
+      return b.commits.map((c) => {
+        return `  ${branchLabel}[${c.message} ${c.commitUrl}]`;
+      });
     });
+    if (outputCommits.length === 0) return;
+    console.log(` [${repo.name} ${repo.url}] ${outputCommits.length}commits`);
+    console.log(outputCommits.join("\n"));
   });
 };
 
