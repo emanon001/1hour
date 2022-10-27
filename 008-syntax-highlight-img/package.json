@@ -1,0 +1,16 @@
+{
+  "name": "syntax-highlight-img",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "emanon001",
+  "license": "MIT",
+  "dependencies": {
+    "highlight.js": "^11.6.0",
+    "node-html-to-image": "^3.2.4"
+  },
+  "type": "module"
+}
