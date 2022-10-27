@@ -26,14 +26,13 @@ const buildHtml = (highlight) => {
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@3.0.2/destyle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
   </head>
   <body>
-    <pre>
-      <code>${highlight}</code>
-    </pre>
+    <pre><code>${highlight}</code></pre>
   </body>
 </html>`;
 };
