@@ -4,7 +4,7 @@ import nodeHtmlToImage from 'node-html-to-image';
 
 /**
  * 標準入力から文字列を読み込む
- * @return Promise<string>
+ * @return {Promise<string>}
  */
 const readInput = async () => {
   const bufferList = [];
