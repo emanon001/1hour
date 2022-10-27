@@ -9,3 +9,4 @@
 - [005-open-scrapbox-random-page](./005-open-scrapbox-random-page) / Scrapboxのページをランダムで開くコマンド。macOS用
 - [006-jq-finder](./006-jq-finder) / jqコマンドのフィルタリング結果を確認するTUIツール
 - [007-gh-commits](./007-gh-commits) / Github GraphQL APIを使用して指定した日付のコミットを取得する
+- [008-syntax-highlight-img](./008-syntax-highlight-img) / シンタックスハイライトした結果の画像を作成するコマンド
