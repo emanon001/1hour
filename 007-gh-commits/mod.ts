@@ -165,7 +165,10 @@ const printCommits = (repoCommits: CommitsByRepository[]): void => {
       });
     });
     if (outputCommits.length === 0) return;
-    console.log(` [${repo.name} ${repo.url}] ${outputCommits.length}commits`);
+    const commitsCount = `${outputCommits.length}commit${
+      outputCommits.length > 1 ? "s" : ""
+    }`;
+    console.log(` [${repo.name} ${repo.url}] ${commitsCount}`);
     console.log(outputCommits.join("\n"));
   });
 };
