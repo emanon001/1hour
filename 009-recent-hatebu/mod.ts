@@ -9,7 +9,6 @@ const fetchHatebuHtml = async (id: string): Promise<string> => {
   return resp.text();
 };
 
-// TODO: parse HTML
 type HatebuEntry = {
   url: string;
   text: string;
@@ -27,8 +26,10 @@ const parseHatebuHtml = (html: string): HatebuEntry[] => {
   });
 };
 
-// TODO: print hatebu entry list
 const printHatebuEntryList = (entryList: HatebuEntry[]) => {
+  entryList.forEach((ent) => {
+    console.log(`${ent.text} / ${ent.url}`);
+  });
 };
 
 const hatebuId = "emanon001";
