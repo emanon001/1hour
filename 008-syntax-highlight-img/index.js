@@ -1,18 +1,14 @@
 import process from 'process';
 import hljs from 'highlight.js';
 import nodeHtmlToImage from 'node-html-to-image';
+import { readFileSync } from 'fs';
 
 /**
  * 標準入力から文字列を読み込む
- * @return {Promise<string>}
+ * @return {string}
  */
-const readInput = async () => {
-  const bufferList = [];
-  for await (const chunk of process.stdin) {
-    bufferList.push(chunk);
-  }
-  const buffer = Buffer.concat(bufferList);
-  return buffer.toString();
+const readInput = () => {
+  return readFileSync(process.stdin.fd, 'utf8');
 };
 
 /**
@@ -37,7 +33,7 @@ const buildHtml = (highlight) => {
 </html>`;
 };
 
-const code = await readInput();
+const code = readInput();
 
 // build HTML
 const highlight = hljs.highlightAuto(code).value;
