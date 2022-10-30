@@ -1,12 +1,10 @@
 import { parse } from "https://deno.land/std@0.161.0/encoding/csv.ts";
+import { readAllSync } from "https://deno.land/std@0.161.0/streams/conversion.ts";
 
-const readInput = async (): Promise<string> => {
+const readInput = (): string => {
+  const content = readAllSync(Deno.stdin);
   const decoder = new TextDecoder();
-  const decodedList: string[] = [];
-  for await (const chunk of Deno.stdin.readable) {
-    decodedList.push(decoder.decode(chunk));
-  }
-  return decodedList.join("");
+  return decoder.decode(content);
 };
 
 const csvToJsonObject = (csv: string[][]): Record<string, unknown>[] => {
@@ -19,7 +17,7 @@ const csvToJsonObject = (csv: string[][]): Record<string, unknown>[] => {
   });
 };
 
-const input = await readInput();
+const input = readInput();
 const csv = parse(input);
 if (csv.length === 0) {
   throw new Error("csv is empty");
