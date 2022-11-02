@@ -48,5 +48,5 @@ function jsonToCsvObject(json: any): Csv {
 const input = readInput();
 const json = JSON.parse(input);
 const csv = jsonToCsvObject(json);
-const csvString = stringify(csv.data, { columns: csv.columns });
+const csvString = stringify(csv.data, { headers: true, columns: csv.columns });
 console.log(csvString);
