@@ -13,11 +13,11 @@ function readInput(): string {
 }
 
 type Csv = {
-  headers: Column[];
+  columns: Column[];
   data: DataItem[];
 };
 
-function jsonToCsv(json: any): Csv {
+function jsonToCsvObject(json: any): Csv {
   // check type
   if (!Array.isArray(json)) {
     throw new Error("JSON is not array");
@@ -31,22 +31,22 @@ function jsonToCsv(json: any): Csv {
   json.forEach((obj) => {
     Object.keys(obj).forEach((k) => keySet.add(k));
   });
-  const headers = Array.from(keySet);
+  const colNames = Array.from(keySet);
 
   // convert
   const data = json.map((obj) => {
-    return headers.reduce((row, k) => {
+    return colNames.reduce((row, k) => {
       return { ...row, [k]: obj[k] ?? "" };
     }, {});
   });
   return {
-    headers,
+    columns: colNames,
     data,
   };
 }
 
 const input = readInput();
 const json = JSON.parse(input);
-const csv = jsonToCsv(json);
-const csvString = stringify(csv.data, { columns: csv.headers });
+const csv = jsonToCsvObject(json);
+const csvString = stringify(csv.data, { columns: csv.columns });
 console.log(csvString);
