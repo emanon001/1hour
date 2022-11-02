@@ -1,8 +1,4 @@
-import {
-  Column,
-  DataItem,
-  stringify,
-} from "https://deno.land/std@0.161.0/encoding/csv.ts";
+import { stringify } from "https://deno.land/std@0.161.0/encoding/csv.ts";
 import { isPlainObject } from "https://deno.land/x/is_what@v4.1.7/src/index.ts";
 import { readAllSync } from "https://deno.land/std@0.161.0/streams/conversion.ts";
 
@@ -12,12 +8,7 @@ function readInput(): string {
   return decoder.decode(content);
 }
 
-type Csv = {
-  columns: Column[];
-  data: DataItem[];
-};
-
-function jsonToCsvObject(json: any): Csv {
+function jsonToCsv(json: any): string {
   // check type
   if (!Array.isArray(json)) {
     throw new Error("JSON is not array");
@@ -31,22 +22,18 @@ function jsonToCsvObject(json: any): Csv {
   json.forEach((obj) => {
     Object.keys(obj).forEach((k) => keySet.add(k));
   });
-  const colNames = Array.from(keySet);
+  const columns = Array.from(keySet);
 
   // convert
   const data = json.map((obj) => {
-    return colNames.reduce((row, k) => {
+    return columns.reduce((row, k) => {
       return { ...row, [k]: obj[k] ?? "" };
     }, {});
   });
-  return {
-    columns: colNames,
-    data,
-  };
+  return stringify(data, { headers: true, columns });
 }
 
 const input = readInput();
 const json = JSON.parse(input);
-const csv = jsonToCsvObject(json);
-const csvString = stringify(csv.data, { headers: true, columns: csv.columns });
-console.log(csvString);
+const csv = jsonToCsv(json);
+console.log(csv);
