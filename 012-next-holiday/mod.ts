@@ -34,7 +34,7 @@ function getNextHoliday(now: DateTime): Holiday {
 const SVG_TEMPLATE = await Deno.readTextFile("resources/holiday-template.svg");
 
 function createHolidaySVG(holiday: Holiday): string {
-  return SVG_TEMPLATE.replace("{daysLeft}", holiday.daysLeft.toString());
+  return SVG_TEMPLATE.replace("{day}", holiday.daysLeft.toString());
 }
 
 const ROOT_ROUTE = new URLPattern({ pathname: "/" });
