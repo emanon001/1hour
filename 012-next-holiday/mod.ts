@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.162.0/http/server.ts";
-import holidayJp from "https://cdn.skypack.dev/@holiday-jp/holiday_jp?dts";
+import holidayJp from "https://esm.sh/@holiday-jp/holiday_jp@2.4.0";
 import { DateTime, datetime } from "https://deno.land/x/ptera@v1.0.2/mod.ts";
 
 type Holiday = {
