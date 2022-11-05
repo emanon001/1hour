@@ -46,7 +46,10 @@ serve((req) => {
     const nextHoliday = getNextHoliday(datetime());
     const svg = createHolidaySVG(nextHoliday);
     return new Response(svg, {
-      headers: { "content-type": "image/svg+xml" },
+      headers: {
+        "content-type": "image/svg+xml",
+        "cache-control": "max-age=1800",
+      },
     });
   }
 
