@@ -2,8 +2,6 @@ import { serve } from "https://deno.land/std@0.162.0/http/server.ts";
 import holidayJp from "https://cdn.skypack.dev/@holiday-jp/holiday_jp?dts";
 import { DateTime, datetime } from "https://deno.land/x/ptera@v1.0.2/mod.ts";
 
-const SVG_TEMPLATE = Deno.readTextFileSync("resources/holiday-template.svg");
-
 type Holiday = {
   daysLeft: number;
 };
@@ -32,6 +30,8 @@ function getNextHoliday(now: DateTime): Holiday {
     daysLeft,
   };
 }
+
+const SVG_TEMPLATE = await Deno.readTextFile("resources/holiday-template.svg");
 
 function createHolidaySVG(holiday: Holiday): string {
   return SVG_TEMPLATE.replace("{daysLeft}", holiday.daysLeft.toString());
