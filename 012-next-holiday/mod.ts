@@ -35,7 +35,7 @@ const SVG_TEMPLATE = await Deno.readTextFile("resources/holiday-template.svg");
 
 function createHolidaySVG(holiday: Holiday): string {
   // 本当はパースしてid指定でテキストを変更した方がよい
-  return SVG_TEMPLATE.replace("{day}", holiday.daysLeft.toString());
+  return SVG_TEMPLATE.replaceAll("{day}", holiday.daysLeft.toString());
 }
 
 const ROOT_ROUTE = new URLPattern({ pathname: "/" });
