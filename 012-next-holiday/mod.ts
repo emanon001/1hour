@@ -7,10 +7,9 @@ type Holiday = {
 };
 
 function getNextHoliday(now: DateTime): Holiday {
-  const nowJp = now.toZonedTime("Asia/Tokyo");
   let daysLeft = 0;
   for (let dayOffset = 1; dayOffset <= 7; dayOffset++) {
-    const dt = nowJp.add({ day: dayOffset });
+    const dt = now.add({ day: dayOffset }).toZonedTime("Asia/Tokyo");
 
     // 土日の判定
     const dayOfWeek = dt.weekDay();
