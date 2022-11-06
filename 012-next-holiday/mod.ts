@@ -13,7 +13,7 @@ function getNextHoliday(now: DateTime): Holiday {
     const dt = nowJp.add({ day: dayOffset });
 
     // 土日の判定
-    const dayOfWeek = Number(dt.format("w"));
+    const dayOfWeek = dt.weekDay();
     if (dayOfWeek === 6 || dayOfWeek === 0) {
       daysLeft = dayOffset;
       break;
