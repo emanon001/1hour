@@ -1,4 +1,5 @@
 use core::fmt;
+use regex::Regex;
 use std::io::{self, BufRead, BufReader};
 
 use clap::Parser;
@@ -92,8 +93,8 @@ impl ListStyleTree {
     }
 
     fn line_content(line: &str) -> String {
-        line.trim_start_matches(|ch| ch == ' ' || ch == '-')
-            .to_string()
+        let regex = Regex::new(r"^\s*(-\s*)?").expect("invalid regex");
+        regex.replace(line, "").into()
     }
 }
 
