@@ -12,7 +12,12 @@ $ cat sample/list1.md
     - 3a
   - 2c
     - 3b
-
+1b
+  2d
+  2e
+    3c
+  2f
+    3d
 $ cat sample/list1.md | cargo run
 1a
 ├── 2a
@@ -20,4 +25,10 @@ $ cat sample/list1.md | cargo run
 │   └── 3a
 └── 2c
     └── 3b
+1b
+├── 2d
+├── 2e
+│   └── 3c
+└── 2f
+    └── 3d
 ```

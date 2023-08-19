@@ -10,6 +10,36 @@ use clap::Parser;
 struct Cli {}
 
 #[derive(Debug)]
+struct MultipleListStyleTree {
+    tree_list: Vec<ListStyleTree>,
+}
+
+impl MultipleListStyleTree {
+    pub fn new(lines: Vec<String>) -> Self {
+        if lines.is_empty() {
+            panic!("lines is empty");
+        }
+        let mut tree_list = Vec::new();
+        let mut line_pos = 0;
+        while line_pos < lines.len() {
+            let tree = ListStyleTree::new_with_line_pos(&lines, line_pos);
+            line_pos = tree.end_line_pos + 1;
+            tree_list.push(tree);
+        }
+        Self { tree_list }
+    }
+}
+
+impl fmt::Display for MultipleListStyleTree {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for tree in &self.tree_list {
+            write!(f, "{}", tree)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
 struct ListStyleTree {
     content: String,
     children: Vec<ListStyleTree>,
@@ -18,11 +48,11 @@ struct ListStyleTree {
 }
 
 impl ListStyleTree {
-    pub fn new(lines: Vec<String>) -> Self {
+    pub fn new_with_line_pos(lines: &[String], line_pos: usize) -> Self {
         if lines.is_empty() {
-            panic!("input is empty");
+            panic!("lines is empty");
         }
-        Self::from_lines_rec(0, &lines)
+        Self::from_lines_rec(line_pos, lines)
     }
 
     fn from_lines_rec(line_pos: usize, lines: &[String]) -> Self {
@@ -115,6 +145,6 @@ fn main() {
         .map(|l| l.expect("failed to read line"))
         .filter(|l| !l.trim().is_empty())
         .collect();
-    let tree = ListStyleTree::new(lines);
+    let tree = MultipleListStyleTree::new(lines);
     println!("{}", tree);
 }
