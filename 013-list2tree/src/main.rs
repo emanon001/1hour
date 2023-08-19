@@ -18,6 +18,9 @@ struct ListStyleTree {
 
 impl ListStyleTree {
     pub fn new(lines: Vec<String>) -> Self {
+        if lines.is_empty() {
+            panic!("input is empty");
+        }
         Self::from_lines_rec(0, &lines)
     }
 
