@@ -2,8 +2,6 @@
 
 次の休日までの日数を画像で表示する。
 
-![next holiday](https://e1-1hour-012-next-holiday.deno.dev/)
-
 ## Usage
 
 ```
